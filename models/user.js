@@ -4,8 +4,14 @@ const UserSchema = new mongoose.Schema({
     name: String,
     age: Number,
     email: String,
-    createdAt : Date,
-    updatedAt : Date,
+    createdAt : {
+        type : Date,
+        default : () => Date.now()
+    },
+    updatedAt : {
+        type : Date,
+        default : () => Date.now()
+    },
     bestFriend: {
         type : mongoose.SchemaTypes.ObjectId,
         ref : "User"
