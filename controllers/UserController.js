@@ -1,4 +1,3 @@
-const { Error } = require("mongoose")
 const User = require("../models/user")
 
 const index = {
@@ -7,7 +6,12 @@ const index = {
         
             if(username){
                 let user = await User.find({name : username})
-                res.json({"name" : user[0].name, "age": user[0].age })
+                if(user.length){
+                    res.status(200).json({"users" : user})
+                }else{
+                    res.status(404).json({"error" : "User not found"})
+                }
+                
             }else{
                 let user = await User.find().populate("bestFriend")
                 console.log(user)
@@ -17,23 +21,21 @@ const index = {
                 else{
                     res.send("No user found in db")
                 }
-                
             }
     
             },
 
     async addUser(req, res){
-                let userDetails = req.body 
-                const user = new User(userDetails)
+                let userDetails = req.body
                 try{
+                    const user = new User(userDetails)
                     await user.save()
                     console.log("user added to db")
+                    res.status(201).json({user})
                 }catch(e){
                     console.log(e.message)
-                }
-                
-                res.status(201).json({user})
-                
+                    res.status(422).json({"error" : e.message})
+                }  
             },
 
             async updateUser(req, res){
@@ -79,8 +81,17 @@ const index = {
 
             async deleteUser(req, res){
                 let userDetails = req.body
-                const user = await User.deleteOne({"name" : userDetails.name})
-                res.status(200).send(user)
+                try{
+                    const user = await User.deleteOne({"name" : userDetails.name})
+                    if(user.deletedCount){
+                        res.status(200).json({"message" : "User deleted successfully"})
+                    }else{
+                        res.status(404).json({"message" : "No data found for deletion"})
+                    }   
+                }catch(e){
+                    console.log(e.message)
+                    res.status(422).json({"error" : e.message})
+                }
             }
 }
 module.exports = index
