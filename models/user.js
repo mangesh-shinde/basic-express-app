@@ -2,11 +2,21 @@ const mongoose = require("mongoose")
 
 const UserSchema = new mongoose.Schema({
     name: String,
-    age: Number,
-    email: String,
+    age: {
+        type : Number,
+        min : 1,
+        max : 125
+    },
+    email: {
+        type : String,
+        required : true,
+        lowercase : true,
+        minLength : 10
+    },
     createdAt : {
         type : Date,
-        default : () => Date.now()
+        default : () => Date.now(),
+        immuatable : true
     },
     updatedAt : {
         type : Date,
