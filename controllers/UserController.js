@@ -5,8 +5,14 @@ const index = {
             let username = req.query.name
         
             if(username){
-                let user = await User.find({name : username})
-                if(user.length){
+                let user = await User.findOne({name : username})
+                //let user = await User.findByName("Mangesh")
+                //user.sayHi()
+                //user.getAge()
+                //user.forEach(u => console.log(u.namedEmail) )
+                //console.log(user.namedEmail)
+
+                if(user){
                     res.status(200).json({"users" : user})
                 }else{
                     res.status(404).json({"error" : "User not found"})
